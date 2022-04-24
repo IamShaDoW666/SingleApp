@@ -54,7 +54,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        return inertia('Posts/Show', compact('post'));
     }
 
     /**
@@ -65,7 +65,8 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        $post = new PostResource($post);
+        return inertia('Posts/Edit', compact('post'));
     }
 
     /**
@@ -75,9 +76,11 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(StorePostRequest $request, Post $post)
     {
-        //
+        $post->update($request->validated());
+
+        return redirect()->route('posts.index');
     }
 
     /**

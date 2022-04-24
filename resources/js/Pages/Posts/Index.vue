@@ -21,18 +21,22 @@
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-300 bg-white">
-          <tr v-for="post in posts" :key="post.id" class="hover:bg-gray-100 cursor-pointer">
+          <tr v-for="post in posts" :key="post.id" :href="route('posts.show', post.id)">
             <td class="p-4">{{ post.id }}</td>
             <td class="p-4">{{ post.title }}</td>
-            <td class="p-4">{{ post.content }}</td>
+            <Link :href="route('posts.show', post.id)" class="hover:text-gray-600 cursor-pointer">
+              <td class="p-4">
+                {{ post.content }}
+              </td>
+            </Link>
             <td class="p-4">{{ post.created_at }}</td>
             <td class="p-4">
-              <!-- <Link :href="route('posts.edit')" name="editButton" class="px-4 mb-3 lg:mb-0 py-2 mr-2 rounded bg-indigo-400 hover:bg-indigo-300 font-bold">
+              <Link :href="route('posts.edit', post.id)" name="editButton" class="px-4 mb-3 lg:mb-0 py-2 mr-2 rounded bg-indigo-400 hover:bg-indigo-300 font-bold">
                 Edit
-              </Link> -->
+              </Link>
               <Button @click="deletePost(post.id)" method="POST" name="deleteButton" class="px-4 py-2 rounded bg-red-400 hover:bg-red-300 font-bold">
                 Delete
-            </Button>
+              </Button>
             </td>
           </tr>
         </tbody>
@@ -64,18 +68,23 @@ export default {
       Swal.fire({
         title: 'Are You Sure? ',
         showDenyButton: true,
-        showCancelButton: true,
         confirmButtonText: 'Yes',
         denyButtonText: 'No',
         customClass: {
           actions: 'my-actions',
-          cancelButton: 'order-1 right-gap',
           confirmButton: 'order-2',
           denyButton: 'order-3',
         }
       }).then((result) => {
         if (result.isConfirmed) {
-          Inertia.delete(route('posts.destroy', id))
+          Inertia.delete(route('posts.destroy', id), {
+            onSuccess: () => {
+              Swal.fire({
+                icon: "warning",
+                title: "Post Deleted Successfully!"
+              })
+            }
+          })
         } else if (result.isDenied) {
           Swal.fire('Changes are not saved', '', 'info')
         }

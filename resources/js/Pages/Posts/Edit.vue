@@ -1,9 +1,9 @@
 <template>
-  <Head title="Create" />
+  <Head title="Edit" />
   <BreezeAuthenticatedLayout>
     <template #header>
       <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        Create
+        Edit
       </h2>
     </template>
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mt-4">
@@ -24,7 +24,7 @@
 
         <div class="flex items-center justify-end mt-4">
           <BreezeButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-            Create
+            Update
           </BreezeButton>
         </div>
       </form>
@@ -57,19 +57,24 @@ export default {
 
   },
 
-  setup() {
+  props: {
+    post: Object
+  },
+
+  setup(props) {
     const form = useForm({
-      title: '',
-      content: '',
+      id: props.post.id,
+      title: props.post.title,
+      content: props.post.content
 
     })
 
     const submit = () => {
-      form.post(route('posts.store'), {
+      form.put(route('posts.update', form.id), {
         onSuccess: () => {
           Swal.fire({
             icon: "success",
-            title: "Post Created Successfully!"
+            title: "Post Updated Successfully!"
           })
         }
       });
